@@ -323,6 +323,7 @@ watch(
 
 // 生命周期钩子
 onMounted(() => {
+  console.log('onMounted');
   if (!props.async) {
     init()
   }
@@ -332,6 +333,7 @@ onMounted(() => {
 const init = () => {
   isInit.value = true
   const myAttributeTemp = []
+
   props.sourceAttribute.forEach((v) => {
     const temp = {
       name: v.name,
@@ -347,6 +349,7 @@ const init = () => {
     })
     myAttributeTemp.push(temp)
   })
+
   props.attribute.forEach((attrVal) => {
     myAttributeTemp.forEach((myAttrVal) => {
       if (attrVal.name === myAttrVal.name) {
@@ -369,7 +372,9 @@ const init = () => {
     })
   })
   myAttribute.value = myAttributeTemp
+
   setTimeout(() => {
+
     props.sku.forEach((skuItem) => {
       form.skuData.forEach((skuDataItem) => {
         if (skuItem.sku === skuDataItem.sku) {
