@@ -1,6 +1,6 @@
 <script setup>
-import SkuForm from '@/views/Components/SkuForm/SkuForm.vue'
 import { reactive } from 'vue'
+import SkuForm from '@/views/Components/SkuForm/SkuForm.vue'
 
 const sourceAttribute = reactive([
   {

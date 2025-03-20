@@ -61,8 +61,9 @@
         </el-table-column>
       </el-table>
     </div>
+    <pre>{{form.skuData}}</pre>
     <div class="sku-list">
-      <el-form ref="form" :model="form" status-icon inline-message>
+      <el-form ref="formRef" :model="form" status-icon inline-message>
         <el-table :data="form.skuData" stripe border highlight-current-row>
           <el-table-column
             v-if="emitAttribute.length > 0"
@@ -98,6 +99,7 @@
                 <i class="el-icon-info"></i>
               </el-tooltip>
             </template>
+
             <template #default="scope">
               <el-form-item
                 v-if="item.type == 'input'"
@@ -125,6 +127,7 @@
                 ></slot>
               </el-form-item>
             </template>
+
           </el-table-column>
           <template v-if="isBatch && form.skuData.length > 2" #append>
             <el-table :data="[{}]" :show-header="false">
@@ -204,10 +207,12 @@ const props = defineProps({
   }
 })
 
-console.log('props', props);
+console.log('props', props)
+console.log('props', props.structure)
 // 定义 emit
 const emit = defineEmits(['update:attribute', 'update:sku'])
 
+const formRef = ref()
 // 响应式数据
 const isInit = ref(false)
 const myAttribute = ref([])
@@ -250,6 +255,7 @@ const isBatch = computed(() => {
 })
 
 const emitAttribute = computed(() => {
+  console.log('emitAttribute', myAttribute.value)
   const attribute = []
   myAttribute.value.forEach((v1) => {
     const obj = {
@@ -275,7 +281,10 @@ watch(
     if (!isInit.value) {
       emit('update:attribute', emitAttribute.value)
     }
+    console.log('watch.myAttribute', myAttribute.value)
     setTimeout(() => {
+      console.log('watch.myAttribute.setTimeout', myAttribute.value, props.attribute.length)
+
       if (props.attribute.length !== 0) {
         combinationAttribute()
       } else {
@@ -299,6 +308,8 @@ watch(
 watch(
   () => form.skuData,
   (newValue, oldValue) => {
+    console.log('oldValue', oldValue)
+    console.log('newValue', newValue)
     if (!isInit.value || (newValue.length === 1 && newValue[0].sku === props.emptySku)) {
       if (oldValue.length || !props.sku.length) {
         const arr = []
@@ -374,9 +385,10 @@ const init = () => {
   myAttribute.value = myAttributeTemp
 
   setTimeout(() => {
-
+    console.log('form.skuData.forEach.skuItem', props.sku, form.skuData);
     props.sku.forEach((skuItem) => {
       form.skuData.forEach((skuDataItem) => {
+
         if (skuItem.sku === skuDataItem.sku) {
           props.structure.forEach((structureItem) => {
             skuDataItem[structureItem.name] = skuItem[structureItem.name]
@@ -385,9 +397,10 @@ const init = () => {
       })
     })
     isInit.value = false
-  }, 0)
+  }, 10)
 }
 
+// TODO
 const combinationAttribute = (index = 0, dataTemp = []) => {
   if (index === 0) {
     for (let i = 0; i < props.attribute[0].item.length; i++) {
@@ -433,6 +446,7 @@ const combinationAttribute = (index = 0, dataTemp = []) => {
 }
 
 const onAddAttribute = (index) => {
+  console.log('onAddAttribute');
   myAttribute.value[index].addAttribute = myAttribute.value[index].addAttribute.trim()
   if (myAttribute.value[index].addAttribute !== '') {
     if (!myAttribute.value[index].addAttribute.includes(props.separator)) {
